@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    #chessboard {
+      display: grid;
+      grid-template-columns: repeat(8, 60px); /* Increased size of squares */
+      grid-template-rows: repeat(8, 60px); /* Increased size of squares */
+    }
+
+    .square {
+      width: 60px; /* Increased size of squares */
+      height: 60px; /* Increased size of squares */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 25px; /* Adjusted font size */
+      cursor: pointer;
+    }
+
+    .white {
+      background-color: #f0d9b5;
+    }
+
+    .black {
+      background-color: #b58863;
+    }
+  </style>
+  <title>Chess</title>
+</head>
+<body>
+  <div id="chessboard"></div>
+
+  <script>
+    const chessboard = document.getElementById('chessboard');
+    let selectedPiece = null;
+
+    // Initialize chessboard
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        const square = document.createElement('div');
+        square.className = (row + col) % 2 === 0 ? 'square white' : 'square black';
+        square.textContent = getPiece(row, col);
+        square.dataset.row = row;
+        square.dataset.col = col;
+
+        if (square.textContent.trim() !== '') {
+          square.addEventListener('click', handleSquareClick);
+        }
+
+        chessboard.appendChild(square);
+      }
+    }
+
+    // Define initial chess piece positions
+    function getPiece(row, col) {
+      const pieces = ['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'];
+      const pawn = '♟';
+
+      if (row === 1) return pawn;
+      if (row === 6) return pawn.toUpperCase();
+      if (row === 0 || row === 7) return pieces[col];
+
+      return '';
+    }
+
+    function handleSquareClick(e) {
+      const { row, col } = e.target.dataset;
+      const clickedPosition = { row: parseInt(row), col: parseInt(col) };
+
+      if (!selectedPiece) {
+        selectedPiece = clickedPosition;
+      } else {
+        if (isValidMove(selectedPiece, clickedPosition)) {
+          movePiece(selectedPiece, clickedPosition);
+        }
+        selectedPiece = null;
+      }
+    }
+
+    function isValidMove(source, target) {
+      const sourceSquare = getSquareElement(source.row, source.col);
+      const targetSquare = getSquareElement(target.row, target.col);
+      const piece = sourceSquare.textContent;
+
+      // Implement your specific chess rules here
+      // For example, allow pawns to move up to two places on their first move
+      const rowDiff = Math.abs(target.row - source.row);
+      const colDiff = Math.abs(target.col - source.col);
+
+      if (piece.toLowerCase() === '♟') {
+        if (rowDiff === 1 && colDiff === 0) {
+          return true;
+        } else if (rowDiff === 2 && colDiff === 0 && source.row === 1) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    function movePiece(source, target) {
+      const sourceSquare = getSquareElement(source.row, source.col);
+      const targetSquare = getSquareElement(target.row, target.col);
+
+      targetSquare.textContent = sourceSquare.textContent;
+      sourceSquare.textContent = '';
+    }
+
+    function getSquareElement(row, col) {
+      return document.querySelector(`.square[data-row="${row}"][data-col="${col}"]`);
+    }
+  </script>
+</body>
+</html>

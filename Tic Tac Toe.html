@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tic Tac Toe</title>
+    <style>
+      .board {
+        display: flex;
+        flex-wrap: wrap;
+        width: 300px;
+      }
+
+      .cell {
+        box-sizing: border-box;
+        width: 100px;
+        height: 100px;
+        border: 1px solid #000;
+        font-size: 75px;
+        text-align: center;
+        line-height: 100px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Tic Tac Toe</h1>
+    <div class="board">
+      <div class="cell" onclick="makeMove(0, 0)"></div>
+      <div class="cell" onclick="makeMove(0, 1)"></div>
+      <div class="cell" onclick="makeMove(0, 2)"></div>
+      <div class="cell" onclick="makeMove(1, 0)"></div>
+      <div class="cell" onclick="makeMove(1, 1)"></div>
+      <div class="cell" onclick="makeMove(1, 2)"></div>
+      <div class="cell" onclick="makeMove(2, 0)"></div>
+      <div class="cell" onclick="makeMove(2, 1)"></div>
+      <div class="cell" onclick="makeMove(2, 2)"></div>
+    </div>
+
+    <script>
+      var board = [
+        ["", "", ""],
+        ["", "", ""],
+        ["", "", ""],
+      ];
+
+      var currentPlayer = "X";
+
+      function makeMove(row, col) {
+        if (board[row][col] === "") {
+          board[row][col] = currentPlayer;
+          document.getElementsByClassName("cell")[row * 3 + col].innerHTML =
+            currentPlayer;
+          checkWin();
+          currentPlayer = currentPlayer === "X" ? "O" : "X";
+        }
+      }
+
+      function checkWin() {
+        var winningConditions = [
+          [
+            [0, 0],
+            [0, 1],
+            [0, 2],
+          ],
+          [
+            [1, 0],
+            [1, 1],
+            [1, 2],
+          ],
+          [
+            [2, 0],
+            [2, 1],
+            [2, 2],
+          ],
+          [
+            [0, 0],
+            [1, 0],
+            [2, 0],
+          ],
+          [
+            [0, 1],
+            [1, 1],
+            [2, 1],
+          ],
+          [
+            [0, 2],
+            [1, 2],
+            [2, 2],
+          ],
+          [
+            [0, 0],
+            [1, 1],
+            [2, 2],
+          ],
+          [
+            [0, 2],
+            [1, 1],
+            [2, 0],
+          ],
+        ];
+
+        for (var i = 0; i < winningConditions.length; i++) {
+          var condition = winningConditions[i];
+          var a = condition[0];
+          var b = condition[1];
+          var c = condition[2];
+
+          if (
+            board[a[0]][a[1]] !== "" &&
+            board[a[0]][a[1]] === board[b[0]][b[1]] &&
+            board[a[0]][a[1]] === board[c[0]][c[1]]
+          ) {
+            alert("Player " + board[a[0]][a[1]] + " wins!");
+            resetBoard();
+            return;
+          }
+        }
+
+        var isBoardFull = true;
+        for (var row = 0; row < 3; row++) {
+          for (var col = 0; col < 3; col++) {
+            if (board[row][col] === "") {
+              isBoardFull = false;
+              break;
+            }
+          }
+        }
+
+        if (isBoardFull) {
+          alert("This game has been tied! Press `OK` to play again.");
+          resetBoard();
+        }
+      }
+
+      function resetBoard() {
+        board = [
+          ["", "", ""],
+          ["", "", ""],
+          ["", "", ""],
+        ];
+
+        var cells = document.getElementsByClassName("cell");
+        for (var i = 0; i < cells.length; i++) {
+          cells[i].innerHTML = "";
+        }
+      }
+    </script>
+  </body>
+</html>
